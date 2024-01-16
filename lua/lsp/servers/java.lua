@@ -1,33 +1,51 @@
+local err_prefix = "[lsp/servers/java.lua] "
+
 local utils = require("utils")
 
+-- -- --
 local _jdtls, jdtls = pcall(require, "jdtls")
-local _handlers, handlers = pcall(require, "lsp.handlers")
-
--- TODO: setup dap
-local _dap, dap = pcall(require, "dap")
-
-
 if not _jdtls then
-	print("[ERROR] Failed to load jdtls")
+	print(err_prefix .. "Failed to load jdtls")
 	return
 end
 
+local _dap, dap = pcall(require, "dap")
 if not _dap then
-	print("[ERROR] Failed to load nvim-dap")
+	print(err_prefix .. "Failed to load nvim-dap")
 end
 
+local _jdtls_dap, jdtls_dap = pcall(require, "jdtls.dap")
+if not _jdtls_dap then
+	print(err_prefix .. "Failed to load jdtls.dap")
+	return
+end
+
+-- -- --
+
+local _handlers, handlers = pcall(require, "lsp.handlers")
 
 
+local os_name = utils.functions.get_os_name()
+
+local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.xml" }
 local jdtls_bin = ""-- 'java' or '/path/to/java17_or_newer/bin/java'
 local jdtls_path = "" -- Must point to eclipse.jdt.ls installation
-local has_mason, _ = pcall(require, "mason")
-if has_mason then
+local java_workspace = ""
+local java_debug_path = os.getenv("HOME") .. "/.java/java-debug"
+
+java_workspace = os.getenv("JAVA_WORKSPACE") and os.getenv("JAVA_WORKSPACE") or ""
+
+
+-- -- SETUP SERVER -- --
+
+local _mason, _ = pcall(require, "mason")
+if _mason then
 	local mason_path = vim.fn.stdpath("data") .. "/mason/"
 	jdtls_path = mason_path .. "packages/jdtls/"
 	jdtls_bin = mason_path .. "bin/jdtls"-- 'java' or '/path/to/java17_or_newer/bin/java'
 else
 	-- Configure alternative jdtls location here
-	print("[ERROR] Jdtls not configured")
+	print(err_prefix .. "Jdtls not configured")
 	return
 end
 
@@ -41,39 +59,10 @@ for _, file in pairs(equinox_file_list) do
 	end
 end
 
-local os_name = utils.functions.get_os_name()
-local java_workspace = ""
-java_workspace = os.getenv("JAVA_WORKSPACE") and os.getenv("JAVA_WORKSPACE") or ""
-
-local get_project_name = function()
-	local cwd = vim.api.nvim_buf_get_name(0)
-	local dirname = ""
-	local dirname_temp = ""
-	if string.find(cwd, java_workspace, 1, true) then	
-		dirname = cwd
-		while dirname ~= java_workspace do
-			dirname_temp = dirname
-			dirname = vim.fn.fnamemodify(dirname, ":p:h:h")
-			dirname_temp = vim.fn.fnamemodify(dirname_temp, ":p:h")
-		end
-		return dirname_temp
-	end
-	return ""
-end
-
---local configuration_path = jdtls_path .. "config_" .. os_name
---local workspace_name = get_project_name()
---local workspace_path = get_project_name()
-local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.xml" }
-
-dap.configurations.java = {
-
-}
-
 local function on_attach(client, bufnr)
 	handlers.on_attach(client, bufnr)
-
 end
+
 
 local jdtls_config = {
 	cmd = { jdtls_bin },
@@ -90,28 +79,53 @@ local jdtls_config = {
 				},
 			},
 		},
+	},
+	init_options = {
+		bundles = {
+			vim.fn.glob(java_debug_path .. "/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1)
+		};
 	}
 }
-local jdtls_setup = function()
-	local jdtls = require('jdtls')
-	jdtls.start_or_attach(jdtls_config)
-end
 
+-- -- SETUP DEBUGGER -- --
+
+
+dap.configurations.java = {
+	{
+		type = 'java';
+		request = 'launch';
+		name = "Launch";
+		javaExec = jdtls_config.cmd;
+	}
+}
+
+jdtls_dap.setup_dap(dap.configurations.java)
 
 vim.api.nvim_create_autocmd('FileType', {
   group = java_cmds,
   pattern = {'java'},
   desc = 'Setup jdtls',
-  callback = jdtls_setup,
-})															
+  callback = function() 
+		jdtls.start_or_attach(jdtls_config)
+	end,
+})				
 
---return {
---
---	cmd = generate_jdtls_cmd(jdtls_bin, equinox_launcher_path, configuration_path, workspace_path),
---	root_dir = require('jdtls.setup').find_root(root_markers), 
---		-- require('jdtls.setup').find_root(root_markers),
---	settings = {
---		java = {
---		},
---	},
---}
+-- -- FUNCTIONS -- --
+
+--local get_project_name = function()
+--	local cwd = vim.api.nvim_buf_get_name(0)
+--	local dirname = ""
+--	local dirname_temp = ""
+--	if string.find(cwd, java_workspace, 1, true) then	
+--		dirname = cwd
+--		while dirname ~= java_workspace do
+--			dirname_temp = dirname
+--			dirname = vim.fn.fnamemodify(dirname, ":p:h:h")
+--			dirname_temp = vim.fn.fnamemodify(dirname_temp, ":p:h")
+--		end
+--		return dirname_temp
+--	end
+--	return ""
+--end
+
+
