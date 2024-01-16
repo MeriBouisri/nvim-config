@@ -22,7 +22,7 @@ end
 -- VARIABLES --
 
 local python_exec = "python3"
-local debugpy_path = os.getenv('GLOBAL_VENV') .. '/tools'
+local debugpy_path = os.getenv('HOME') .. '.virtualenvs/tools'
 local venv_names = { "venv", ".venv" }
 
 
