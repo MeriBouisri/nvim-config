@@ -1,8 +1,11 @@
 local err_prefix = "[lsp/servers/java.lua] "
 
 local utils = require("utils")
+local keymaps = require("lsp.keymaps")
+
 
 -- -- --
+
 local _jdtls, jdtls = pcall(require, "jdtls")
 if not _jdtls then
 	print(err_prefix .. "Failed to load jdtls")
@@ -36,7 +39,9 @@ local java_debug_path = os.getenv("HOME") .. "/.java/java-debug"
 java_workspace = os.getenv("JAVA_WORKSPACE") and os.getenv("JAVA_WORKSPACE") or ""
 
 
--- -- SETUP SERVER -- --
+-- ==================
+--   SETUP SERVER
+-- ==================
 
 local _mason, _ = pcall(require, "mason")
 if _mason then
@@ -87,7 +92,9 @@ local jdtls_config = {
 	}
 }
 
--- -- SETUP DEBUGGER -- --
+-- ======================= 
+--    SETUP DEBUGGER
+-- =======================
 
 
 dap.configurations.java = {
@@ -110,6 +117,7 @@ vim.api.nvim_create_autocmd('FileType', {
 	end,
 })				
 
+keymaps.setup_jdtls_keymaps()
 -- -- FUNCTIONS -- --
 
 --local get_project_name = function()
