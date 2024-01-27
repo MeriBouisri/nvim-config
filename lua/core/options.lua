@@ -17,4 +17,7 @@ opt.timeoutlen = 500
 -- No delay on <Esc> key
 opt.ttimeoutlen = 0
 
+-- Remove tildes char in files
+opt.fillchars = { eob = " " }
+
 vim.cmd.colorscheme("everforest")

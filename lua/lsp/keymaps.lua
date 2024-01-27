@@ -7,7 +7,7 @@ local map_opts = { noremap = true, silent = true }
 M.leader = {
 	diagnostics = "<leader>D",
 	debugger = "<leader><C-d>",
-	jdtls = "<leader>J"
+	jdtls = "<leader><C-J>"
 } 
 
 M.setup_diagnostics_keymaps = function()

@@ -3,7 +3,6 @@ local err_prefix = "[lsp/servers/java.lua] "
 local utils = require("utils")
 local keymaps = require("lsp.keymaps")
 
-
 -- -- --
 
 local _jdtls, jdtls = pcall(require, "jdtls")
