@@ -28,6 +28,5 @@ require("mason-lspconfig").setup({
 
 -- Load servers
 
-require('lsp.servers.lua')
-require('lsp.servers.python')
-require('lsp.servers.java')
+require('lsp.servers')
+
