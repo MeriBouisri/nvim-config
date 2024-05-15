@@ -2,10 +2,14 @@
 local kmap = vim.keymap.set
 
 latex_engine = {
+	latexmk = "latexmk",
 	pdflatex = "pdflatex",
 	lualatex = "lualatex"
 }
 
+
+ltex_workspace = os.getenv("HOME") .. "/workspaces/latex-workspace"
+latexmkrc = os.getenv("HOME") .. "/.latexmkrc"
 pdf_viewers = {
 	zathura = "zathura",
 	x11_zathura = "GDK_BACKEND=x11 zathura"
@@ -24,9 +28,10 @@ kmap({ 'n', },'txj', function() require("knap").forward_jump() end)
 
 
 
+
 local gknapsettings = {
     texoutputext = "pdf",
-    textopdf = latex_engine.lualatex .. " -synctex=1 -halt-on-error -interaction=batchmode %docroot%",
+    textopdf = latex_engine.pdflatex .. " -synctex=1 -halt-on-error -interaction=batchmode %docroot%",
     textopdfviewerlaunch = pdf_viewers.x11_zathura .. " %outputfile%",
     --textopdfviewerrefresh = "none",
 		--textopdfforwardjump = "okular --unique %outputfile%'#src:%line% '%srcfile%"

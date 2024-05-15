@@ -2,6 +2,7 @@ local scripts_path = ".config/nvim/scripts"
 
 local M = {}
 
+local fs_script = "filesystem.sh"
 M.concat = function(separator, table)
 	local concat_string = ""
 	for _, str in ipairs(table) do
@@ -34,11 +35,19 @@ M.get_os_name = function()
 end
 
 M.file_exists = function(filename)
-	return M._run_shell_script("filesystem.sh", { "-f", filename })
+	return M._run_shell_script(fs_script, { "file_exists", filename })
 end
 
 M.dir_exists = function(dirname)
-	return M._run_shell_script("filesystem.sh", { "-d", dirname })
+	return M._run_shell_script(fs_script, { "dir_exists", dirname })
+end
+
+M.create_dir = function(dirname)
+	return M._run_shell_script(fs_script, { "create_dir", dirname})
+end
+
+M.create_file = function(filename)
+	return M._run_shell_script(fs_script, { "create_file", filename})
 end
 
 M.toggle_relnum = function()

@@ -12,7 +12,7 @@ file_exists() {
   exit 1
 }
 
-directory_exists() {
+dir_exists() {
   local dirname=$1
 
   if [ -d $dirname ]; then
@@ -22,14 +22,23 @@ directory_exists() {
   exit 1
 }
 
-while getopts ":f:d:" opt; do
-  case "${opt}" in
-    f)
-      file_exists $OPTARG
-      ;;
+create_dir() {
+	mkdir $1
+	exit $?
+}
 
-    d)
-      directory_exists $OPTARG
-      ;;
-  esac
-done
+create_file() {
+	touch $1
+	exit $?	
+}
+
+if declare -f "$1" > /dev/null
+then
+	[[ "$1" = _* ]] && exit 1
+	"$@"
+else
+	echo "[scripts/filesystem.sh] ERROR : '$1' is not a known function name" >&2
+	exit 1
+fi
+
+

@@ -4,18 +4,20 @@ if not status then
 	return
 end
 
---copilot.setup({
---	suggestion = {
---		enable = true,
---		auto_trigger = false,
---		debounce = 75,
---		keymap = {
---			accept = "<M-l>", 
---			next = "<M-]>",
---			prev = "<M-[>",
---			dismiss = "<C-[>",
---		},
---	},
---})
+local prefix = "<leader>c"
+
+copilot.setup({
+	suggestion = {
+		enable = true,
+		auto_trigger = false,
+		debounce = 75,
+	--	keymap = {
+	--		accept = prefix .. "l", 
+	--		next = prefix .. "j",
+	--		prev = prefix .. "k",
+	--		dismiss = prefix .. "h",
+	--	},
+	},
+})
 
 

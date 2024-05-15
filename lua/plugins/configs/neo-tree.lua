@@ -8,6 +8,12 @@ local mapping_opts = { noremap = true, silent = true }
 vim.keymap.set("n", "<leader><Tab>", "<Cmd>Neotree toggle<CR>", mapping_opts)
 vim.keymap.set("n", "<leader>e", "<Cmd>Neotree position=left<CR>", mapping_opts)
 
+local to_trash_folder = function(state)
+	local path = state.tree:get_node().path
+	vim.fn.system({ "trash", vim.fn.fnameescape(path) })
+	require("neo-tree.sources.manager").refresh(state.name)
+end
+
 neotree.setup({
 	enable_git_status = false,
 	default_component_configs = {
@@ -45,8 +51,9 @@ neotree.setup({
 		},
 	},
 	filesystem = {
-		follow_current_file = { enabled = true },
+		follow_current_file = { enabled = false },
 		use_libuv_file_watcher = true,
+		group_empty_dirs = true,
 
 		filtered_items = {
 			visible = true,
@@ -58,6 +65,12 @@ neotree.setup({
 			mappings = {
 				["L"] = "set_root",
 				["H"] = "navigate_up",
+				["D"] = to_trash_folder,
+				--["D"] = function(state)
+				--	local path = state.tree:get_node().path
+				--	vim.fn.system({ "trash", vim.fn.fnameescape(path) })
+				--	require("neo-tree.sources.manager").refresh(state.name)
+				--end,
 			},
 		},
 	},

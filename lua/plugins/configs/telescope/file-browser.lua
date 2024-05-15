@@ -5,9 +5,6 @@ if not ok_telescope then
 	return
 end
 
-local mapping_opts = { noremap = true }
-vim.api.nvim_set_keymap("n", "<leader>te", "<Cmd>Telescope file_browser<CR>", mapping_opts) 
-vim.api.nvim_set_keymap("n", "<leader>tE", "<Cmd>Telescope file_browser path=%:p:h select_buffer=true<CR>", mapping_opts) 
 
 
 

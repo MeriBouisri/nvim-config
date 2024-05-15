@@ -1,3 +1,4 @@
+local utils = require("utils.functions")
 local err_prefix = "[lsp/servers/latex.lua]"
 
 -- -- -- 
@@ -15,7 +16,11 @@ if not _lspcmp then
 end
 -- -- -- 
 
+local tex_workspace = os.getenv("HOME") .. "/workspaces/latex-workspace"
+
+
 latex_engine = {
+	latexmk = "latexmk",
 	pdflatex = "pdflatex",
 	lualatex = "lualatex",
 }
@@ -27,7 +32,9 @@ lspcfg["texlab"].setup({
 			diagnosticsDelay = 50,
 			build = {
 				executable = latex_engine.pdflatex,
-				args = { '-synctex=1', '-halt-on-error', '-interaction=batchmode', '%f' },
+				args = { '-synctex=1', '-interaction=batchmode', '%f' },
+			--	--args = { '-output-directory', '%:h', '-synctex=1', '-halt-on-error', '-interaction=batchmode', '%f' },
+			--	--args = { '-synctex=1', '-halt-on-error', '-interaction=batchmode', '%f' },
 				onSave = true
 			},
 			chktex = {

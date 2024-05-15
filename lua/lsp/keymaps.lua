@@ -57,6 +57,7 @@ M.setup_jdtls_keymaps = function()
 	vim.keymap.set("v", M.leader.jdtls .. "v", function() jdtls.extract_variable(true) end)
 	vim.keymap.set("v", M.leader.jdtls .. "c", function() jdtls.extract_constant(true) end)
 	vim.keymap.set("v", M.leader.jdtls .. "m", function() jdtls.extract_method(true) end)
+
 end
 
 
