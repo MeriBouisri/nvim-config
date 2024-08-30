@@ -29,13 +29,16 @@ M.get_os_name = function()
 		return "linux"
 	end
 
-	if vim.fn.has("max") == 1 then
-		return "max"
+	if vim.fn.has("mac") == 1 then
+		return "mac"
 	end
 end
 
-M.file_exists = function(filename)
-	return M._run_shell_script(fs_script, { "file_exists", filename })
+M.file_exists = function(file)
+	local f = io.open(file, "r")
+	if f then f:close() end
+	return f ~= nil
+	--return M._run_shell_script(fs_script, { "file_exists", filename })
 end
 
 M.dir_exists = function(dirname)
@@ -55,6 +58,22 @@ M.toggle_relnum = function()
 		return
 	end
 	vim.wo.relativenumber = not vim.wo.relativenumber
+end
+
+M.lines_from = function(file)
+	
+	local lines = {}
+
+	if not M.file_exists(file) then 
+		print("File " .. file .. " does not exist")
+		return lines
+	end
+
+	for line in io.lines(file) do
+		lines[#lines + 1] = line
+	end
+
+	return lines
 end
 
 return M

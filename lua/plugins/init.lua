@@ -19,6 +19,17 @@ return {
 			require("plugins.configs.neo-tree")
 		end,
 	},
+
+	{
+		"startup-nvim/startup.nvim",
+		requires = {
+			"nvim-telescope/telescope.nvim",
+			"nvim-lua/plenary.nvim",
+		},
+		config = function()
+			require("plugins.configs.startup")
+		end,
+	},
 --	{
 --		"akinsho/bufferline.nvim", version = "*",
 --		dependencies = {
