@@ -24,7 +24,8 @@ M.setup_debugger_keymaps = function()
 		return
 	end
 
-	vim.keymap.set("n", M.leader.debugger .. "0", function() dap.continue() end)
+
+	vim.keymap.set("n", M.leader.debugger .. "0", function() dap.continue({true}) end)
 	vim.keymap.set("n", M.leader.debugger .. "1", function() dap.step_over() end)
 	vim.keymap.set("n", M.leader.debugger .. "2", function() dap.step_into() end)
 	vim.keymap.set("n", M.leader.debugger .. "3", function() dap.step_out() end)

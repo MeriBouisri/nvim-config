@@ -86,7 +86,7 @@ local jdtls_config = {
 	},
 	init_options = {
 		bundles = {
-			vim.fn.glob(java_debug_path .. "/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 1)
+			vim.fn.glob(java_debug_path .. "/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar", 0)
 		};
 	}
 }
