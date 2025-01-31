@@ -30,6 +30,12 @@ return {
 			require("plugins.configs.startup")
 		end,
 	},
+	{
+    "atiladefreitas/dooing",
+    config = function()
+        require("plugins.configs.dooing")
+    end,
+	},
 --	{
 --		"akinsho/bufferline.nvim", version = "*",
 --		dependencies = {
@@ -84,7 +90,7 @@ return {
 --			require("lsp_signature").setup(opts)
 --		end,
 --	},
-
+	
 	{
 		"folke/neodev.nvim",
 		opts = {},

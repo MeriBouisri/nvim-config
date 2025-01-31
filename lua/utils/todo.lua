@@ -34,28 +34,34 @@ end
 -- GETTERS
 -- --
 
+--- Get task table by index
+---@param json table table containing tasks
+---@param ntask integer index of task
+---@return table task table of task
+M.get_task = function(json, ntask)
+	return json[ntask]
+end
+
 ----- Get completion status of a task
------@param json table json table
------@param ntask string task number, as ordered in the table
+-----@param task table json of task
 ----- @return true if task completed
-M.is_completed = function(json, ntask)
-	return json[ntask]["completed"]
+M.is_completed = function(task)
+	return task["completed"]
 end
 
 ----- Get description of a task
------@param json table json table
------@param ntask string task number, as ordered in the table
+-----@param task table json of task
 ----- @return string description
-M.get_task_description = function(json, ntask)
-	return json[ntask]["task"]
+M.get_description = function(task)
+	return task["task"]
 end
 
 --- Get due date of a task
----@param json table json table
----@param ntask string task number, as ordered in the table
+---@param task table json of task
+--- @return string description
 --- @return string due_date due date of the task
-M.get_due_date = function(json, ntask)
-	return json[ntask]["due"]
+M.get_due_date = function(task)
+	return task["due"]
 end
 
 -- --
@@ -63,47 +69,32 @@ end
 -- --
 
 ---Set the description of a task 
----@param json table list of tasks
----@param ntask integer index of task
+---@param task table table of task
 ---@param description string the new description 
----@return table task the task at ntask that was modified. empty table if task index not larger than number of items in json
-M.set_description = function(json, ntask, description)
-	if ntask > #json then
-		return {}
-	end
+---@return table task the task at ntask that was modified. 
+M.set_description = function(task, description)
+	task["task"] = description
 
-	json[ntask]["task"] = description
-
-	return json[ntask]
+	return task
 end
 ---Set a task as completed or uncompleted
----@param json table list of tasks
----@param ntask integer index of task
+---@param task table table of task
 ---@param completed boolean true if completed, false if not
----@return table task the task at ntask that was modified. empty table if task index not larger than number of items in json
-M.set_completed = function(json, ntask, completed)
-	if ntask > #json then 
-		return {} 
-	end
+---@return table task the task at ntask that was modified. 
+M.set_completed = function(task, completed)
+	task["completed"] = completed
 
-	json[ntask]["completed"] = completed
-
-	return json
+	return task
 end
 
 ---Set the due date of a task 
----@param json table list of tasks
----@param ntask integer index of task
+---@param task table table of task
 ---@param due_date string the new due date
----@return table task the task at ntask that was modified. empty table if task index not larger than number of items in json
-M.set_due_date = function(json, ntask, due_date)
-	if ntask > #json then
-		return {}
-	end
+---@return table task the task at ntask that was modified. 
+M.set_due_date = function(task, due_date)
+	task["due"] = due_date
 
-	json[ntask]["due"] = due_date
-
-	return json[ntask]
+	return task
 end
 
 -- --
@@ -139,9 +130,9 @@ end
 ---
 M.format_task = function(task)
 	-- dont know why cant put keyword in variables
-	local str_completed = task["completed"] and 'y' or 'n'
-	local str_due_date = task["due"]
-	local str_description = task["task"]
+	local str_completed = M.is_completed(task) and 'y' or 'n'
+	local str_due_date = M.get_due_date(task)
+	local str_description = M.get_description(task)
 
 	local formatted = '[' .. str_completed .. '] ' .. str_description .. ' - ' .. str_due_date
 
@@ -163,6 +154,30 @@ M.format_all_tasks = function(json)
 end
 
 
+
+M.setup_autocommands = function(json)
+	local dummy_fun = function(json)
+		M.append_task(json[M.todo], "this is a NEW NEW task" .. string.format(#json[M.todo]), "0101")
+		print(cjson.encode(json))
+
+	end
+
+	M.append_task(json[M.todo], "this is task n" .. string.format(#json[M.todo], "22"))
+	M.append_task(json[M.todo], "this is task n" .. string.format(#json[M.todo], "22"))
+	M.append_task(json[M.todo], "this is task n" .. string.format(#json[M.todo], "22"))
+--			print(cjson.encode(json))
+--		end
+--	local augroup = vim.api.nvim_create_augroup   -- Create/get autocommand group
+--	local autocmd = vim.api.nvim_create_autocmd   -- Create autocomman	d
+--
+--	autocmd('TodoAdd', {
+--		callback = 
+--	})
+	--
+	local opts = { noremap = true, silent = true }
+	vim.keymap.set("n", "<space>td", function() dummy_fun(json) end, opts)
+end
+
 --- Function to call to setup the program.
 ---@return boolean success true if setup successful, false if not
 M.setup = function()
@@ -174,9 +189,12 @@ M.setup = function()
 
 	local json = M.decode_tasks(M.file)
 	M.tasks = M.format_all_tasks(json[M.todo])
+	M.setup_autocommands(json)
 
 	return true
 end
+
+
 
 --- Function for tests. M.tasks not initialized yet
 M.test = function()
@@ -187,12 +205,32 @@ M.test = function()
 	local tasks = {}
 	local json = M.decode_tasks(M.file)
 	local task = json[M.todo][1]
+
+	print('test M.get_task')
+	print(cjson.encode(
+		M.get_task(
+			json[M.todo], 
+			1
+		)
+	))
+	print(
+		M.is_completed(
+			M.get_task(
+				json[M.todo], 
+				1)
+			)
+		)
+
 	
 	local formatted_tasks = M.format_all_tasks(json[M.todo])
 	for i, v in ipairs(formatted_tasks) do
 		print(v)
 	end
 end
+
+-- -- -- -- -- --
+-- AUTO COMMANDS
+-- -- -- -- -- --
 
 
 return M

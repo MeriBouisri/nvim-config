@@ -12,3 +12,16 @@ if not _lspcmp then
 	return
 end
 
+lspcfg.clangd.setup({
+	server = {
+		settings = {
+			clangd = {
+
+			}
+		}
+	},
+	filetypes = { 'c', 'cpp', 'cxx', 'cc' },
+	root_dir = function() vim.fn.getcwd() end;
+	capabilities = lspcmp.default_capabilities()
+})
+
